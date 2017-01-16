@@ -1,10 +1,11 @@
 #Stage 2 Update (Python 3)
 from __future__ import unicode_literals
 from django.utils.encoding import python_2_unicode_compatible
+from django.utils import timezone
 from builtins import range
 from builtins import str
 from builtins import object
-import datetime
+
 from django.db import models
 from django.db.models import Q
 
@@ -97,12 +98,12 @@ class Scraper(models.Model):
     last_scraper_save_alert_period = models.CharField(max_length=5, blank=True, 
         help_text="Optional, used for scraper monitoring with 'check_last_scraper_saves' management cmd, \
         syntax: [HOURS]h or [DAYS]d or [WEEKS]w (e.g. '6h', '5d', '2w')")
-    next_last_scraper_save_alert = models.DateTimeField(default=datetime.datetime.now,
+    next_last_scraper_save_alert = models.DateTimeField(default=timezone.now,
         help_text="Next time the last scraper save will be alerted, normally set on management cmd run.",)
     last_checker_delete_alert_period = models.CharField(max_length=5, blank=True, 
         help_text="Optional, used for scraper monitoring with 'check_last_checker_deletes' management cmd, \
         syntax: [HOURS]h or [DAYS]d or [WEEKS]w (e.g. '6h', '5d', '2w')")
-    next_last_checker_delete_alert = models.DateTimeField(default=datetime.datetime.now,
+    next_last_checker_delete_alert = models.DateTimeField(default=timezone.now,
         help_text="Next time the last checker delete will be alerted, normally set on management cmd run.",)
     comments = models.TextField(blank=True)
     last_scraper_save = models.DateTimeField(null=True, blank=True)
@@ -116,11 +117,11 @@ class Scraper(models.Model):
                 try:
                     num_int = int(num_str)
                     if period_str == 'h':
-                        return datetime.timedelta(0, 0, 0, 0, 0, num_int)
+                        return timedelta(0, 0, 0, 0, 0, num_int)
                     if period_str == 'd':
-                        return datetime.timedelta(num_int)
+                        return timedelta(num_int)
                     if period_str == 'w':
-                        return datetime.timedelta(0, 0, 0, 0, 0, 0, num_int)
+                        return timedelta(0, 0, 0, 0, 0, 0, num_int)
                 except ValueError:
                     return None
             else:
@@ -293,7 +294,7 @@ class SchedulerRuntime(models.Model):
         ('C', 'CHECKER'),
     )
     runtime_type = models.CharField(max_length=1, choices=TYPE, default='P')
-    next_action_time = models.DateTimeField(default=datetime.datetime.now)
+    next_action_time = models.DateTimeField(default=timezone.now)
     next_action_factor = models.FloatField(blank=True, null=True)
     num_zero_actions = models.IntegerField(default=0)
     
@@ -337,7 +338,7 @@ class Log(models.Model):
     level = models.IntegerField(choices=LEVEL_CHOICES)
     spider_name = models.CharField(max_length=200)
     scraper = models.ForeignKey(Scraper, blank=True, null=True)
-    date = models.DateTimeField(default=datetime.datetime.now)
+    date = models.DateTimeField(default=timezone.now)
     
     @staticmethod
     def numeric_level(level):

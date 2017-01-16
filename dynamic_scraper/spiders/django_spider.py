@@ -4,7 +4,7 @@ from __future__ import unicode_literals
 from builtins import str
 from builtins import map
 from builtins import range
-import ast, datetime, importlib, json, logging, scrapy
+import ast, importlib, json, logging, scrapy
 
 from jsonpath_rw import jsonpath, parse
 from jsonpath_rw.lexer import JsonPathLexerError
@@ -17,6 +17,7 @@ from scrapy.exceptions import CloseSpider
 
 from django.db.models.signals import post_save
 from django.utils.encoding import smart_text
+from django.utils import timezone
 
 from dynamic_scraper.spiders.django_base_spider import DjangoBaseSpider
 from dynamic_scraper.models import ScraperElem
@@ -510,7 +511,7 @@ class DjangoSpider(DjangoBaseSpider):
     
     def _post_save_tasks(self, sender, instance, created, **kwargs):
         if instance and created:
-            self.scraper.last_scraper_save = datetime.datetime.now()
+            self.scraper.last_scraper_save = timezone.now()
             self.scraper.save()
     
 

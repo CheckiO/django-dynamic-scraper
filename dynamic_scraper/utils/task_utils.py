@@ -2,8 +2,9 @@
 from future import standard_library
 standard_library.install_aliases()
 from builtins import object
-import datetime, json
+import json
 import urllib.request, urllib.parse, http.client
+from django.utils import timezone
 from scrapy.utils.project import get_project_settings
 settings = get_project_settings()
 from dynamic_scraper.models import Scraper
@@ -44,7 +45,7 @@ class TaskUtils(object):
     def run_spiders(self, ref_obj_class, scraper_field_name, runtime_field_name, spider_name, *args, **kwargs):
         filter_kwargs = {
             scraper_field_name + '__status': 'A',
-            runtime_field_name + '__next_action_time__lt': datetime.datetime.now(),
+            runtime_field_name + '__next_action_time__lt': timezone.now(),
         }
         for key in kwargs:
             filter_kwargs[key] = kwargs[key]
@@ -59,7 +60,7 @@ class TaskUtils(object):
     def run_checkers(self, ref_obj_class, scraper_field_path, runtime_field_name, checker_name, *args, **kwargs):
         filter_kwargs = {
             scraper_field_path + '__status': 'A',
-            runtime_field_name + '__next_action_time__lt': datetime.datetime.now(),
+            runtime_field_name + '__next_action_time__lt': timezone.now(),
         }
         for key in kwargs:
             filter_kwargs[key] = kwargs[key]

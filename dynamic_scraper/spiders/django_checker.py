@@ -1,7 +1,7 @@
 #Stage 2 Update (Python 3)
 from __future__ import unicode_literals
 from builtins import str
-import datetime, json, logging, os
+import json, logging, os
 
 from jsonpath_rw import jsonpath, parse
 from jsonpath_rw.lexer import JsonPathLexerError
@@ -10,6 +10,8 @@ from scrapy import signals
 from scrapy.exceptions import CloseSpider
 from scrapy.http import Request
 from pydispatch import dispatcher
+
+from django.utils import timezone
 
 from dynamic_scraper.spiders.django_base_spider import DjangoBaseSpider
 from dynamic_scraper.models import ScraperElem
@@ -88,7 +90,7 @@ class DjangoChecker(DjangoBaseSpider):
             pass
         
         self.ref_object.delete()
-        self.scraper.last_checker_delete = datetime.datetime.now()
+        self.scraper.last_checker_delete = timezone.now()
         self.scraper.save()
         self.action_successful = True
         self.log("Item deleted.", logging.INFO)

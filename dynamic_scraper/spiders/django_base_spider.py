@@ -1,7 +1,7 @@
 #Stage 2 Update (Python 3)
 from __future__ import unicode_literals
 from builtins import str
-import datetime, json, logging, os
+import json, logging, os
 from scrapy import signals
 from scrapy.spiders import Spider
 from scrapy.spiders import CrawlSpider
@@ -13,6 +13,7 @@ django.setup()
 
 from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
+from django.utils import timezone
 
 from dynamic_scraper.models import Log, LogMarker
 
@@ -205,7 +206,7 @@ class DjangoBaseSpider(CrawlSpider):
                     self.action_successful,\
                     self.scheduler_runtime.next_action_factor,\
                     self.scheduler_runtime.num_zero_actions)
-            self.scheduler_runtime.next_action_time = datetime.datetime.now() + time_delta
+            self.scheduler_runtime.next_action_time = timezone.now() + time_delta
             self.scheduler_runtime.next_action_factor = factor
             self.scheduler_runtime.num_zero_actions = num_crawls
             self.scheduler_runtime.save()

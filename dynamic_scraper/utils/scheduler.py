@@ -1,7 +1,9 @@
 #Stage 2 Update (Python 3)
 from __future__ import division
 from builtins import object
-import ast, datetime
+import ast
+from datetime import timedelta
+
 from django.core.exceptions import ImproperlyConfigured
 
 class Scheduler(object):
@@ -46,7 +48,7 @@ class Scheduler(object):
         next_action_factor = round(next_action_factor, 3)
         time_delta = max(time_delta, self.conf['MIN_TIME'])
         time_delta = min(time_delta, self.conf['MAX_TIME'])
-        time_delta = datetime.timedelta(minutes=int(time_delta))    
+        time_delta = timedelta(minutes=int(time_delta))
         result = (time_delta, next_action_factor, num_zero_actions)
         
         return result

@@ -2,12 +2,13 @@
 from __future__ import unicode_literals
 from builtins import str
 from builtins import object
-from datetime import date
+from datetime import timedelta
 from django.contrib import admin
 from django.contrib.admin import SimpleListFilter
 from django.core.exceptions import ValidationError
 from django.forms.models import BaseInlineFormSet
 from django.utils.translation import ugettext_lazy as _
+from django.utils import timezone
 from dynamic_scraper.models import *
 
 
@@ -168,7 +169,7 @@ class ScraperAdmin(admin.ModelAdmin):
             td = obj.get_last_scraper_save_alert_period_timedelta()
             if td:
                 html_str = html_str + ' (' + obj.last_scraper_save_alert_period + ')'
-                if not obj.last_scraper_save or obj.last_scraper_save < datetime.datetime.now() - td:
+                if not obj.last_scraper_save or obj.last_scraper_save < timezone.now() - td:
                     html_str = '<span style="color:red;">' + html_str + '</span>'
         return html_str
     
@@ -183,7 +184,7 @@ class ScraperAdmin(admin.ModelAdmin):
             td = obj.get_last_checker_delete_alert_period_timedelta()
             if td:
                 html_str = html_str + ' (' + obj.last_checker_delete_alert_period + ')'
-                if not obj.last_checker_delete or obj.last_checker_delete < datetime.datetime.now() - td:
+                if not obj.last_checker_delete or obj.last_checker_delete < timezone.now() - td:
                     html_str = '<span style="color:red;">' + html_str + '</span>'
         return html_str
     
@@ -251,36 +252,36 @@ class LogDateFilter(SimpleListFilter):
     
     def queryset(self, request, queryset):
         if self.value() == 'today':
-            comp_date = datetime.datetime.today()
+            comp_date = timezone.now().date()
             return queryset.filter(
                 date__year=comp_date.year,
                 date__month=comp_date.month,
                 date__day=comp_date.day,
             )
         if self.value() == 'yesterday':
-            comp_date = datetime.datetime.today() - datetime.timedelta(1)
+            comp_date = timezone.now().date() - timedelta(1)
             return queryset.filter(
                 date__year=comp_date.year,
                 date__month=comp_date.month,
                 date__day=comp_date.day,
             )
         if self.value() == 'last_hour':
-            comp_date = datetime.datetime.now() - datetime.timedelta(0, 0, 0, 0, 0, 1)
+            comp_date = timezone.now() - timedelta(0, 0, 0, 0, 0, 1)
             return queryset.filter(
                 date__gt=comp_date
             )
         if self.value() == 'last_6_hours':
-            comp_date = datetime.datetime.now() - datetime.timedelta(0, 0, 0, 0, 0, 6)
+            comp_date = timezone.now() - timedelta(0, 0, 0, 0, 0, 6)
             return queryset.filter(
                 date__gt=comp_date
             )
         if self.value() == 'last_24_hours':
-            comp_date = datetime.datetime.now() - datetime.timedelta(1)
+            comp_date = timezone.now() - timedelta(1)
             return queryset.filter(
                 date__gt=comp_date
             )
         if self.value() == 'last_week':
-            comp_date = datetime.datetime.now() - datetime.timedelta(7)
+            comp_date = timezone.now() - timedelta(7)
             return queryset.filter(
                 date__gt=comp_date
             )

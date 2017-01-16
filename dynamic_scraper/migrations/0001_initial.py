@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
+import django.utils.timezone
 from django.db import models, migrations
-import datetime
 
 
 class Migration(migrations.Migration):
@@ -20,7 +19,7 @@ class Migration(migrations.Migration):
                 ('type', models.CharField(max_length=25, blank=True)),
                 ('level', models.IntegerField(choices=[(50, b'CRITICAL'), (40, b'ERROR'), (30, b'WARNING'), (20, b'INFO'), (10, b'DEBUG')])),
                 ('spider_name', models.CharField(max_length=200)),
-                ('date', models.DateTimeField(default=datetime.datetime.now)),
+                ('date', models.DateTimeField(default=django.utils.timezone.now)),
             ],
             options={
                 'ordering': ['-date'],
@@ -46,7 +45,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('runtime_type', models.CharField(default=b'P', max_length=1, choices=[(b'S', b'SCRAPER'), (b'C', b'CHECKER')])),
-                ('next_action_time', models.DateTimeField(default=datetime.datetime.now)),
+                ('next_action_time', models.DateTimeField(default=django.utils.timezone.now)),
                 ('next_action_factor', models.FloatField(null=True, blank=True)),
                 ('num_zero_actions', models.IntegerField(default=0)),
             ],

@@ -1,7 +1,11 @@
 #Stage 2 Update (Python 3)
 from __future__ import unicode_literals
 from builtins import str
-import datetime, logging, re
+import logging, re
+from datetime import timedelta, datetime
+
+from django.utils import timezone
+from django.utils.timezone import make_aware
 
 
 def string_strip(text, loader_context):
@@ -70,13 +74,13 @@ def date(text, loader_context):
     cformat = loader_context.get('date')
     try:
         if text.lower() in ['gestern', 'yesterday',]:
-            date = datetime.date.today() - datetime.timedelta(1)
+            date = timezone.now().date() - timedelta(1)
         elif text.lower() in ['heute', 'today',]:
-            date = datetime.date.today()
+            date = timezone.now().date()
         elif text.lower() in ['morgen', 'tomorrow',]:
-            date = datetime.date.today() + datetime.timedelta(1)
+            date = timezone.now().date() + timedelta(1)
         else:
-            date = datetime.datetime.strptime(text, cformat)
+            date = make_aware(datetime.strptime(text, cformat))
     except ValueError:
         loader_context.get('spider').log('Date could not be parsed ("{t}", Format string: "{f}")!'.format(t=text, f=cformat), logging.ERROR)
         return None
@@ -86,7 +90,7 @@ def date(text, loader_context):
 def time(text, loader_context):
     cformat = loader_context.get('time')
     try:
-        time = datetime.datetime.strptime(text, cformat)
+        time = datetime.strptime(text, cformat)
     except ValueError:
         loader_context.get('spider').log('Time could not be parsed ("{t}", Format string: "{f}")!'.format(t=text, f=cformat), logging.ERROR)
         return None
@@ -96,7 +100,7 @@ def time(text, loader_context):
 def ts_to_date(ts_str, loader_context):
     try:
         ts_int = int(ts_str)
-        return datetime.datetime.fromtimestamp(ts_int).strftime('%Y-%m-%d')
+        return datetime.fromtimestamp(ts_int).strftime('%Y-%m-%d')
     except ValueError:
         loader_context.get('spider').log('Timestamp could not be parsed ("{ts}")!'.format(ts=ts_str), logging.ERROR)
         return None
@@ -105,7 +109,7 @@ def ts_to_date(ts_str, loader_context):
 def ts_to_time(ts_str, loader_context):
     try:
         ts_int = int(ts_str)
-        return datetime.datetime.fromtimestamp(ts_int).strftime('%H:%M:%S')
+        return datetime.fromtimestamp(ts_int).strftime('%H:%M:%S')
     except ValueError:
         loader_context.get('spider').log('Timestamp could not be parsed ("{ts}")!'.format(ts=ts_str), logging.ERROR)
         return None
@@ -155,7 +159,7 @@ def duration(text, loader_context):
                 text = _breakdown_time_unit_overlap(text, 60)
                 cformat = '%M:%S'
     try:
-        duration = datetime.datetime.strptime(text, cformat)
+        duration = datetime.strptime(text, cformat)
     except ValueError:
         loader_context.get('spider').log('Duration could not be parsed ("{t}", Format string: "{f}")!'.format(t=text, f=cformat), logging.ERROR)
         return None
